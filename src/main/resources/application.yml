@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    username: ${MYSQL_USERNAME:root}
+    password: ${MYSQL_PASSWORD:password}
+    url: jdbc:mysql://${DB_HOST:0.0.0.0}:${DB_PORT:3307}/myblog?createDatabaseIfNotExist=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  devtools:
+    restart:
+      enabled: true
