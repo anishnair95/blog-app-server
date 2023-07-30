@@ -9,6 +9,9 @@ import com.springboot.blog.util.DataConvertor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -29,10 +32,12 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public List<PostDto> getAllPosts() {
+    public List<PostDto> getAllPosts(int pageNo, int pageSize) {
         LOGGER.info("Inside PostServiceImpl.class getPosts()");
-        List<Post> posts = postRepository.findAll();
-        return DataConvertor.postEntitiesToDto(posts);
+
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Post> posts = postRepository.findAll(pageable);
+        return DataConvertor.postEntitiesToDto(posts.getContent());
     }
 
     @Override

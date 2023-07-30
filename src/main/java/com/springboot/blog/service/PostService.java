@@ -8,9 +8,11 @@ public interface PostService {
 
     /**
      * Get All posts details
+     * @param pageNo page number to get the list of posts
+     * @param pageSize number of posts in single response
      * @return list of Post object
      */
-    List<PostDto> getAllPosts();
+    List<PostDto> getAllPosts(int pageNo, int pageSize);
 
     /**
      * Create a new post
