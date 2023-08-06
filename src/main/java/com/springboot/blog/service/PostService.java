@@ -1,6 +1,7 @@
 package com.springboot.blog.service;
 
 import com.springboot.blog.dto.PostDto;
+import com.springboot.blog.dto.PostResponse;
 
 import java.util.List;
 
@@ -12,7 +13,10 @@ public interface PostService {
      * @param pageSize number of posts in single response
      * @return list of Post object
      */
-    List<PostDto> getAllPosts(int pageNo, int pageSize);
+    @Deprecated
+    List<PostDto> getPosts(int pageNo, int pageSize);
+
+    PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
 
     /**
      * Create a new post

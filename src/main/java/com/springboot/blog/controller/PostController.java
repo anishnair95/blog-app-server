@@ -1,7 +1,14 @@
 package com.springboot.blog.controller;
 
 
+import static com.springboot.blog.util.ApplicationConstants.DEFAULT_PAGE_NUMBER;
+import static com.springboot.blog.util.ApplicationConstants.DEFAULT_PAGE_SIZE;
+import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_BY;
+import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_DIRECTION;
+import static org.springframework.beans.factory.xml.BeanDefinitionParserDelegate.DEFAULT_VALUE;
+
 import com.springboot.blog.dto.PostDto;
+import com.springboot.blog.dto.PostResponse;
 import com.springboot.blog.service.PostService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,11 +62,14 @@ public class PostController extends BaseController {
      * @return List of posts
      */
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts(
-            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
+    public ResponseEntity<PostResponse> getAllPosts(
+            @RequestParam(name = "pageNo", defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = DEFAULT_SORT_DIRECTION, required = false) String sortDir) {
         LOGGER.info("Inside PostController.class getPosts");
-        return new ResponseEntity<>(postService.getAllPosts(pageNo, pageSize), HttpStatus.OK);
+        LOGGER.info("Request params: pageNo:{}, pageSize: {}, sortBy: {}, sortDir: {}", pageNo, pageSize, sortBy, sortDir);
+        return new ResponseEntity<>(postService.getAllPosts(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
     }
 
     /**
