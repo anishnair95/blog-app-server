@@ -1,6 +1,8 @@
 package com.springboot.blog.util;
 
+import com.springboot.blog.dto.CommentDto;
 import com.springboot.blog.dto.PostDto;
+import com.springboot.blog.entity.Comment;
 import com.springboot.blog.entity.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,5 +43,28 @@ public class DataConvertor {
         post.setTitle(postDto.getTitle());
 
         return post;
+    }
+
+    public static Comment commentDtoToEntity(CommentDto commentDto) {
+        return Comment.builder()
+                .name(commentDto.getName())
+                .email(commentDto.getEmail())
+                .body(commentDto.getBody())
+//                .post(commentDto.getPost() != null ? postDtoToEntity(commentDto.getPost()) : null)
+                .build();
+    }
+
+    public static CommentDto commentEntityToDto(Comment comment) {
+        return CommentDto.builder()
+                .id(comment.getId())
+                .name(comment.getName())
+                .email(comment.getEmail())
+                .body(comment.getBody())
+//                .post(comment.getPost() != null ? postEntityToDto(comment.getPost()) : null)
+                .build();
+    }
+
+    public static List<CommentDto> commentEntitiesToDto(List<Comment> comments) {
+        return comments.stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toList());
     }
 }
