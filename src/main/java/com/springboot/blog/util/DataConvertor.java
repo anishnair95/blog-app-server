@@ -67,4 +67,11 @@ public class DataConvertor {
     public static List<CommentDto> commentEntitiesToDto(List<Comment> comments) {
         return comments.stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toList());
     }
+
+    public static Comment updateCommentEntity(Comment comment, CommentDto commentDto) {
+        comment.setName(commentDto.getName());
+        comment.setEmail(commentDto.getEmail());
+        comment.setBody(commentDto.getBody());
+        return comment;
+    }
 }

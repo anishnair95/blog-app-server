@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -54,6 +53,19 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto getCommentById(Long postId, Long commentId) {
         LOGGER.info("Inside CommentServiceImpl.class getCommentById()");
+        Comment comment = getCommentByPostIdAndCommentId(postId, commentId);
+        return DataConvertor.commentEntityToDto(comment);
+    }
+
+    @Override
+    public CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto) {
+        LOGGER.info("Inside CommentServiceImpl.class updateComment()");
+        Comment comment = getCommentByPostIdAndCommentId(postId, commentId);
+        return DataConvertor.commentEntityToDto(commentRepository.save(DataConvertor.updateCommentEntity(comment, commentDto)));
+    }
+
+    //validate and get the comment based on postid and commentid
+    private Comment getCommentByPostIdAndCommentId(Long postId, Long commentId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException(Post.class.getSimpleName(), "id", String.valueOf(postId)));
 
         Comment comment = commentRepository.findById(commentId)
@@ -62,7 +74,7 @@ public class CommentServiceImpl implements CommentService {
         if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogApiException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
         }
-        return DataConvertor.commentEntityToDto(comment);
+        return comment;
     }
 
     private void justCheck() {
