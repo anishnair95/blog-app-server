@@ -53,7 +53,8 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Post> posts = postRepository.findAll(pageable);
 
-        List<PostDto> content = DataConvertor.postEntitiesToDto(posts.getContent(), modelMapper);
+//        List<PostDto> content = DataConvertor.postEntitiesToDto(posts.getContent(), modelMapper);
+        List<PostDto> content = DataConvertor.postEntitiesToDto(posts.getContent());
         return PostResponse.builder()
                 .content(content)
                 .pageNo(pageNo)
@@ -67,7 +68,8 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
         LOGGER.info("Inside PostServiceImpl.class createPost()");
-        Post savedPost = postRepository.save(DataConvertor.postDtoToEntity(postDto, modelMapper));
+//        Post savedPost = postRepository.save(DataConvertor.postDtoToEntity(postDto, modelMapper));
+        Post savedPost = postRepository.save(DataConvertor.postDtoToEntity(postDto));
         return DataConvertor.postEntityToDto(savedPost);
     }
 
@@ -76,7 +78,7 @@ public class PostServiceImpl implements PostService {
         LOGGER.info("Inside PostServiceImpl.class getPostById()");
         Optional<Post> post = postRepository.findById(id);
         return post
-                .map( p -> DataConvertor.postEntityToDto(p, modelMapper))
+                .map(DataConvertor::postEntityToDto)
                 .orElseThrow(() -> new ResourceNotFoundException(Post.class.getSimpleName(),"id",id.toString()));
     }
 
@@ -91,7 +93,7 @@ public class PostServiceImpl implements PostService {
 
 
         //update postDto to post object and save in DB
-        return DataConvertor.postEntityToDto(postRepository.save(DataConvertor.updatePostEntity(post, postDto)), modelMapper);
+        return DataConvertor.postEntityToDto(postRepository.save(DataConvertor.updatePostEntity(post, postDto)));
 
     }
 
