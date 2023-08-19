@@ -7,6 +7,7 @@ import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import com.springboot.blog.util.DataConvertor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,15 +24,18 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+
+    private final ModelMapper modelMapper;
     private static final Logger LOGGER = LoggerFactory.getLogger(PostService.class);
 
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, ModelMapper modelMapper) {
         this.postRepository = postRepository;
+        this.modelMapper = modelMapper;
     }
 
-
+    @Deprecated
     @Override
     public List<PostDto> getPosts(int pageNo, int pageSize) {
         LOGGER.info("Inside PostServiceImpl.class getPosts()");
@@ -50,6 +53,7 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
         Page<Post> posts = postRepository.findAll(pageable);
 
+//        List<PostDto> content = DataConvertor.postEntitiesToDto(posts.getContent(), modelMapper);
         List<PostDto> content = DataConvertor.postEntitiesToDto(posts.getContent());
         return PostResponse.builder()
                 .content(content)
@@ -64,6 +68,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDto createPost(PostDto postDto) {
         LOGGER.info("Inside PostServiceImpl.class createPost()");
+//        Post savedPost = postRepository.save(DataConvertor.postDtoToEntity(postDto, modelMapper));
         Post savedPost = postRepository.save(DataConvertor.postDtoToEntity(postDto));
         return DataConvertor.postEntityToDto(savedPost);
     }

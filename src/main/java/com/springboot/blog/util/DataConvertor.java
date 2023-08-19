@@ -4,10 +4,12 @@ import com.springboot.blog.dto.CommentDto;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.entity.Comment;
 import com.springboot.blog.entity.Post;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -29,11 +31,29 @@ public class DataConvertor {
                 .id(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .description(post.getDescription()).build();
+                .description(post.getDescription())
+                .comments(post.getComments().stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toSet()))
+                .build();
     }
 
     public static List<PostDto> postEntitiesToDto(List<Post> posts) {
         return posts.stream().map(DataConvertor::postEntityToDto).collect(Collectors.toList());
+    }
+
+
+    //using mapper
+    public static PostDto postEntityToDto(Post post, ModelMapper modelMapper) {
+        return modelMapper.map(post, PostDto.class);
+    }
+
+    //using mapper
+    public static Post postDtoToEntity(PostDto postDto, ModelMapper modelMapper) {
+        return modelMapper.map(postDto, Post.class);
+    }
+
+    //using mapper
+    public static List<PostDto> postEntitiesToDto(List<Post> posts, ModelMapper modelMapper) {
+        return posts.stream().map( p -> DataConvertor.postEntityToDto(p, modelMapper)).collect(Collectors.toList());
     }
 
 
@@ -64,8 +84,23 @@ public class DataConvertor {
                 .build();
     }
 
-    public static List<CommentDto> commentEntitiesToDto(List<Comment> comments) {
+    public static List<CommentDto> commentEntitiesToDto(Set<Comment> comments) {
         return comments.stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toList());
+    }
+
+    //using mapper
+    public static Comment commentDtoToEntity(CommentDto commentDto, ModelMapper modelMapper) {
+        return modelMapper.map(commentDto, Comment.class);
+    }
+
+    //using mapper
+    public static CommentDto commentEntityToDto(Comment comment, ModelMapper modelMapper) {
+        return modelMapper.map(comment, CommentDto.class);
+    }
+
+    //using mapper
+    public static List<CommentDto> commentEntitiesToDto(List<Comment> comments, ModelMapper modelMapper) {
+        return comments.stream().map( c -> DataConvertor.commentEntityToDto(c, modelMapper)).collect(Collectors.toList());
     }
 
     public static Comment updateCommentEntity(Comment comment, CommentDto commentDto) {
