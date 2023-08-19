@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import javax.xml.ws.Response;
 
 
 @RestController
@@ -84,6 +87,21 @@ public class CommentController extends BaseController {
             @RequestBody CommentDto commentDto) {
         LOGGER.info("Inside CommentController.class updateComment");
         return new ResponseEntity<>(commentService.updateComment(postId, commentId, commentDto), HttpStatus.OK);
+    }
+
+    /**
+     * Delete comment API
+     *
+     * @param postId id of the post
+     * @param commentId id of the comment
+     * @return success message
+     */
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    public ResponseEntity<String> deleteComment(@PathVariable(name = "postId") Long postId,
+            @PathVariable(name = "commentId") Long commentId) {
+        LOGGER.info("Inside CommentController.class deleteComment");
+        commentService.deleteComment(postId, commentId);
+        return ResponseEntity.ok("Comment deleted successfully");
     }
 
 }

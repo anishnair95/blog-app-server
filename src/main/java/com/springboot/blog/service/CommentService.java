@@ -42,4 +42,13 @@ public interface CommentService {
      */
     CommentDto updateComment(Long postId, Long commentId, CommentDto commentDto);
 
+    /**
+     * Delete a comment belongs to post
+     *
+     * @param postId id of the post
+     * @param commentId id of the comment
+     */
+    void deleteComment(Long postId, Long commentId);
+
+
 }

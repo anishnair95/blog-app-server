@@ -4,6 +4,7 @@ import com.springboot.blog.dto.CommentDto;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.entity.Comment;
 import com.springboot.blog.entity.Post;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +37,18 @@ public class DataConvertor {
         return posts.stream().map(DataConvertor::postEntityToDto).collect(Collectors.toList());
     }
 
+    public static PostDto postEntityToDto(Post post, ModelMapper modelMapper) {
+        return modelMapper.map(post, PostDto.class);
+    }
+
+    public static Post postDtoToEntity(PostDto postDto, ModelMapper modelMapper) {
+        return modelMapper.map(postDto, Post.class);
+    }
+
+    public static List<PostDto> postEntitiesToDto(List<Post> posts, ModelMapper modelMapper) {
+        return posts.stream().map( p -> DataConvertor.postEntityToDto(p, modelMapper)).collect(Collectors.toList());
+    }
+
 
     public static Post updatePostEntity(Post post, PostDto postDto) {
         post.setDescription(postDto.getDescription());
@@ -66,6 +79,18 @@ public class DataConvertor {
 
     public static List<CommentDto> commentEntitiesToDto(List<Comment> comments) {
         return comments.stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toList());
+    }
+
+    public static Comment commentDtoToEntity(CommentDto commentDto, ModelMapper modelMapper) {
+        return modelMapper.map(commentDto, Comment.class);
+    }
+
+    public static CommentDto commentEntityToDto(Comment comment, ModelMapper modelMapper) {
+        return modelMapper.map(comment, CommentDto.class);
+    }
+
+    public static List<CommentDto> commentEntitiesToDto(List<Comment> comments, ModelMapper modelMapper) {
+        return comments.stream().map( c -> DataConvertor.commentEntityToDto(c, modelMapper)).collect(Collectors.toList());
     }
 
     public static Comment updateCommentEntity(Comment comment, CommentDto commentDto) {
