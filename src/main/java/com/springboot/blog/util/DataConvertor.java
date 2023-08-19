@@ -1,5 +1,7 @@
 package com.springboot.blog.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.springboot.blog.dto.CommentDto;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.entity.Comment;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
  */
 public class DataConvertor {
 
+    private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataConvertor.class);
 
     public static Post postDtoToEntity(PostDto postDto) {
@@ -109,4 +112,19 @@ public class DataConvertor {
         comment.setBody(commentDto.getBody());
         return comment;
     }
+
+    public static <T> T deserializeJsonString(String jsonString, Class<T> clazz) {
+
+        LOGGER.info("Inside deserialize convertor");
+        if (jsonString != null && !jsonString.isEmpty()) {
+            try {
+                return mapper.readValue(jsonString, clazz);
+            } catch (Exception e) {
+                LOGGER.error("Error in deserialization with error message: {}", e.getMessage());
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
+    }
+
 }
