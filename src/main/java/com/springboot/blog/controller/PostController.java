@@ -5,7 +5,6 @@ import static com.springboot.blog.util.ApplicationConstants.DEFAULT_PAGE_NUMBER;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_PAGE_SIZE;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_BY;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_DIRECTION;
-import static org.springframework.beans.factory.xml.BeanDefinitionParserDelegate.DEFAULT_VALUE;
 
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
@@ -25,9 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 
-import javax.xml.ws.Response;
 
 @RestController
 @RequestMapping("/api/posts")
