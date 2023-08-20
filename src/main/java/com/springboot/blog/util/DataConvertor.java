@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,7 +36,8 @@ public class DataConvertor {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .description(post.getDescription())
-                .comments(post.getComments().stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toSet()))
+                .comments(post.getComments() != null ? post.getComments().stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toSet())
+                        : Collections.emptySet())
                 .build();
     }
 
