@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 
 
 @RestController
@@ -47,7 +48,7 @@ public class PostController extends BaseController {
      * @return PostDto response
      */
     @PostMapping
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto) {
+    public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
         LOGGER.info("Inside PostController.class createPost");
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
@@ -94,7 +95,7 @@ public class PostController extends BaseController {
      * @return Post object
      */
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable(name="id") Long id) {
+    public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name="id") Long id) {
         LOGGER.info("Inside PostController.class updatePost");
         return ResponseEntity.ok(postService.updatePost(postDto, id));
     }

@@ -6,6 +6,8 @@ import com.springboot.blog.exception.BlogApiException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -48,13 +50,28 @@ public class BaseController {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
+    //  global exception handler
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<ErrorResponse> baseExceptionHandler(Exception ex, WebRequest webRequest) {
         return new ResponseEntity<>(buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR.value(), webRequest.getDescription(false)),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    //  global exception handler
+    //javax validation exception handler
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgNotValidException(MethodArgumentNotValidException ex, WebRequest webRequest) {
+        Map<String, String> resp = new HashMap<>();
+
+        //getAllErrors will give list of errors
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String message = error.getDefaultMessage();
+            resp.put(fieldName, message);
+        });
+        return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+
     private Map<String, Object> buildErrorResponse(RuntimeException ex, int statusCode) {
         Map<String,Object>response = new HashMap<>();
         response.put("success", false);
