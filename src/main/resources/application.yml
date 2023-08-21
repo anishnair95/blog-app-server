@@ -12,3 +12,13 @@ spring:
   devtools:
     restart:
       enabled: true
+  #Standardise username and password
+  security:
+    user:
+      name: user
+      password: password
+      roles: ADMIN
+logging:
+  level:
+    org.springframework.security: DEBUG
+
