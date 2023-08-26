@@ -6,6 +6,7 @@ import com.springboot.blog.exception.BlogApiException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -71,11 +72,18 @@ public class BaseController {
         return new ResponseEntity<>(resp, HttpStatus.BAD_REQUEST);
     }
 
+    //access denied exception handler
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex, WebRequest webRequest) {
+        ErrorResponse response = buildErrorResponse(ex, HttpStatus.UNAUTHORIZED.value(),
+                webRequest.getDescription(false)); //false so that will not include other extra info
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
 
     private Map<String, Object> buildErrorResponse(RuntimeException ex, int statusCode) {
         Map<String,Object>response = new HashMap<>();
         response.put("success", false);
-        Map<String, Object> reasons = new HashMap<String, Object>(){{
+        Map<String, Object> reasons = new HashMap<>() {{
             put("code", statusCode);
             put("message", ex.getMessage());
         }};
