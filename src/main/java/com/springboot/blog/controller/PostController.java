@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -47,6 +48,7 @@ public class PostController extends BaseController {
      * @param postDto Request object
      * @return PostDto response
      */
+    @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
         LOGGER.info("Inside PostController.class createPost");
@@ -76,7 +78,7 @@ public class PostController extends BaseController {
      * @return Post object with details
      */
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> getPostById(@PathVariable(name="id") Long id) {
+    public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class getPostById");
         return ResponseEntity.ok(postService.getPostById(id));
     }
@@ -94,8 +96,9 @@ public class PostController extends BaseController {
      * @param id id of the post object to update
      * @return Post object
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name="id") Long id) {
+    public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class updatePost");
         return ResponseEntity.ok(postService.updatePost(postDto, id));
     }
@@ -105,11 +108,11 @@ public class PostController extends BaseController {
      * @param id id of the post to delete
      * @return returns success message if post deleted successfully
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         LOGGER.info("Inside PostController.class deletePost");
         postService.deletePost(id);
-
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
 
