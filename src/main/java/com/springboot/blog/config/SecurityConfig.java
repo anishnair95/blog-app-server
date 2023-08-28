@@ -14,18 +14,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+/**
+ * Configuration
+ * <br/>
+ * The configuration would be like create, post, update and delete will be accessible by only ADMIN users.
+ * <br/>
+ * GET APIs will be accessible by users
+ * @return
+ */
 @Configuration
 @EnableMethodSecurity // enables method level security
 public class SecurityConfig {
 
-    /**
-     * Configuration
-     * <br/>
-     * The configuration would be like create, post, update and delete will be accessible by only ADMIN users.
-     * <br/>
-     * GET APIs will be accessible by users
-     * @return
-     */
     @Bean
     public static PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
