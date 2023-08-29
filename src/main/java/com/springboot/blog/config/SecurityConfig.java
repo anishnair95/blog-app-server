@@ -1,18 +1,17 @@
 package com.springboot.blog.config;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -26,6 +25,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableMethodSecurity // enables method level security
 public class SecurityConfig {
+
+    private final UserDetailsService userDetailsService;
+
+    @Autowired
+    public SecurityConfig(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    /**
+     * Authentication manager instance using <b>AuthenticationConfiguration</b>
+     * <br/><br/>
+     * This authentication manager automatically uses UserDetailsService to get user from database. It also uses passwordEncoder() to encode and
+     * decode the password.
+     * @param authenticationConfiguration Authentication Manger configuration
+     * @return Instance of authentication manager
+     * @throws Exception
+     */
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
     @Bean
     public static PasswordEncoder passwordEncoder() {
@@ -53,22 +73,24 @@ public class SecurityConfig {
     }
 
     //in-memory authentication
-    @Bean
-    public UserDetailsService getUserDetails() {
 
-        UserDetails stdUser = User.builder()
-                .username("user")
-                .password(passwordEncoder().encode("user"))
-                .roles("USER")
-                .build();
-
-        UserDetails adminUser = User.builder()
-                .username("admin")
-                .password(passwordEncoder().encode("password"))
-                .roles("ADMIN")
-                .build();
-
-        //storing the user in-memory
-        return new InMemoryUserDetailsManager(stdUser, adminUser);
-    }
+    // Commenting out since not required if using authentication from database
+//    @Bean
+//    public UserDetailsService getUserDetails() {
+//
+//        UserDetails stdUser = User.builder()
+//                .username("user")
+//                .password(passwordEncoder().encode("user"))
+//                .roles("USER")
+//                .build();
+//
+//        UserDetails adminUser = User.builder()
+//                .username("admin")
+//                .password(passwordEncoder().encode("password"))
+//                .roles("ADMIN")
+//                .build();
+//
+//        //storing the user in-memory
+//        return new InMemoryUserDetailsManager(stdUser, adminUser);
+//    }
 }

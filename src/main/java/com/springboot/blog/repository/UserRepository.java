@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByUsername(String username); //just checks if user exists by username or not
 
     @Query(value = "select CASE "
-            + "WHEN count(u) >0 THEN true"
+            + "WHEN count(u) > 0 THEN true "
             + "ELSE false END from User u where u.username = :username")
     Boolean findUserExistsByUsername(String username);
 
