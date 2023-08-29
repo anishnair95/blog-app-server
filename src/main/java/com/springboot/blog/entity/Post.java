@@ -19,6 +19,9 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
+/**
+ * Entity class for Post
+ */
 @Entity
 //specifying unique constraints in our table
 @Table(name = "posts", uniqueConstraints = {@UniqueConstraint(columnNames = {"title"})})
@@ -27,10 +30,6 @@ import jakarta.persistence.UniqueConstraint;
 @Setter
 @NoArgsConstructor // since hibernate uses proxies to create objects so we need noargconstr
 @AllArgsConstructor
-
-/**
- * Entity class for Post
- */
 public class Post {
 
     @Id
