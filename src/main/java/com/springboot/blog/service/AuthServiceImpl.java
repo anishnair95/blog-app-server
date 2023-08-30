@@ -1,5 +1,7 @@
 package com.springboot.blog.service;
 
+import static com.springboot.blog.constants.ApplicationConstants.LOGIN_MESSAGE;
+
 import com.springboot.blog.dto.LoginDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
         LOGGER.info("Inside AuthServiceImpl.class login()");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "User Logged-in successfully !!";
+        return LOGIN_MESSAGE;
     }
 
 }
