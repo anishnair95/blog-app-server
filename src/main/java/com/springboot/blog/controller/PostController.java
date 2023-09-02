@@ -48,7 +48,9 @@ public class PostController extends BaseController {
      * @param postDto Request object
      * @return PostDto response
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')") // only accessible by ADMIN
+    // note: while mentioning role by default prefix 'ROLE' is checked
+    // if the prefix is not present then it is automatically added by internal functions but this is not same when defining role check in SecurityConfig
+    @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
         LOGGER.info("Inside PostController.class createPost");
@@ -96,7 +98,7 @@ public class PostController extends BaseController {
      * @param id id of the post object to update
      * @return Post object
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class updatePost");
@@ -108,7 +110,7 @@ public class PostController extends BaseController {
      * @param id id of the post to delete
      * @return returns success message if post deleted successfully
      */
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         LOGGER.info("Inside PostController.class deletePost");

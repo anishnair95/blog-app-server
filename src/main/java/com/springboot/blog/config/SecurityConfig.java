@@ -65,7 +65,7 @@ public class SecurityConfig {
                         // allow anyone to access the url pattern without auth
                         //  authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll() // accessible by all the users
-                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("ROLE_USER", "ROLE_ADMIN")
+                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
                                  .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults());
 
