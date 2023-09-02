@@ -48,7 +48,7 @@ public class PostController extends BaseController {
      * @param postDto Request object
      * @return PostDto response
      */
-    @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
+    @PreAuthorize("hasRole('ROLE_ADMIN')") // only accessible by ADMIN
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
         LOGGER.info("Inside PostController.class createPost");
@@ -96,7 +96,7 @@ public class PostController extends BaseController {
      * @param id id of the post object to update
      * @return Post object
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class updatePost");
@@ -108,7 +108,7 @@ public class PostController extends BaseController {
      * @param id id of the post to delete
      * @return returns success message if post deleted successfully
      */
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         LOGGER.info("Inside PostController.class deletePost");
