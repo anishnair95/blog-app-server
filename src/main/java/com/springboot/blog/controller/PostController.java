@@ -48,6 +48,8 @@ public class PostController extends BaseController {
      * @param postDto Request object
      * @return PostDto response
      */
+    // note: while mentioning role by default prefix 'ROLE' is checked
+    // if the prefix is not present then it is automatically added by internal functions but this is not same when defining role check in SecurityConfig
     @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
