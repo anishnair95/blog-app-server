@@ -1,8 +1,9 @@
-package com.springboot.blog.service;
+package com.springboot.blog.service.impl;
 
 import static com.springboot.blog.constants.ApplicationConstants.LOGIN_MESSAGE;
 
 import com.springboot.blog.dto.LoginDto;
+import com.springboot.blog.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
