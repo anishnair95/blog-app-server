@@ -10,10 +10,12 @@ public class JwtAuthResponse {
 
     private String accessToken;
     private String tokenType;
+    private Long expiresIn;
 
-    public JwtAuthResponse(String accessToken, String tokenType) {
+    public JwtAuthResponse(String accessToken, String tokenType, Long expiresIn) {
         this.accessToken = accessToken;
         this.tokenType = tokenType;
+        this.expiresIn = expiresIn;
     }
 
     public String getAccessToken() {
@@ -32,12 +34,21 @@ public class JwtAuthResponse {
         this.tokenType = tokenType;
     }
 
+    public Long getExpiresIn() {
+        return expiresIn;
+    }
+
+    public void setExpiresIn(Long expiresIn) {
+        this.expiresIn = expiresIn;
+    }
+
     public static JwtAuthResponseBuilder builder() {
         return new JwtAuthResponseBuilder();
     }
     public static final class JwtAuthResponseBuilder {
         private String accessToken;
         private String tokenType = "Bearer";
+        private Long expiresIn;
 
         public JwtAuthResponseBuilder() {}
 
@@ -51,8 +62,13 @@ public class JwtAuthResponse {
             return this;
         }
 
+        public JwtAuthResponseBuilder expiresIn(Long expiresIn) {
+            this.expiresIn = expiresIn;
+            return this;
+        }
+
         public JwtAuthResponse build() {
-            return new JwtAuthResponse(accessToken, tokenType);
+            return new JwtAuthResponse(accessToken, tokenType, expiresIn);
         }
     }
 }

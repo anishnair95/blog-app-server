@@ -4,6 +4,7 @@ import static com.springboot.blog.constants.ApplicationConstants.LOGIN_MESSAGE;
 import static com.springboot.blog.constants.ApplicationConstants.REGISTER_MESSAGE;
 import static java.lang.String.format;
 
+import com.springboot.blog.dto.JwtAuthResponse;
 import com.springboot.blog.dto.LoginDto;
 import com.springboot.blog.dto.RegisterDto;
 import com.springboot.blog.entity.Role;
@@ -58,10 +59,10 @@ public class AuthServiceImpl implements AuthService {
      * <br/>
      * After successfully authentication the object is stored in SecurityContextHolder
      * @param loginDto object containing user details
-     * @return message after login
+     * @return JwtAuthResponse which contains token details after successful authentication
      */
     @Override
-    public String login (LoginDto loginDto) {
+    public JwtAuthResponse login (LoginDto loginDto) {
         LOGGER.info("Inside AuthServiceImpl.class login()");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,5 +1,6 @@
 package com.springboot.blog.security;
 
+import com.springboot.blog.dto.JwtAuthResponse;
 import com.springboot.blog.exception.BlogApiException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -30,8 +31,7 @@ public class JwtTokenProvider {
     private Long jwtExpirationDate;
 
     // generate JWT token
-    // TODO: apply JwtAuthResponse and serializer the details
-    public String generateToken(Authentication authentication) {
+    public JwtAuthResponse generateToken(Authentication authentication) {
 
         // from Authentication, we will fetch the username or email of the user
         String username = authentication.getName();
@@ -39,13 +39,16 @@ public class JwtTokenProvider {
         Date expireDate = new Date(currentDate.getTime() + jwtExpirationDate);
 
         // create jwt token
-        return Jwts.builder()
+        final String token = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(key())
                 .compact();
-
+        return JwtAuthResponse.builder()
+                .accessToken(token)
+                .expiresIn(jwtExpirationDate)
+                .build();
     }
 
     // get the signature key

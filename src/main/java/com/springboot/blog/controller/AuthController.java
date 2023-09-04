@@ -30,16 +30,12 @@ public class AuthController {
     /**
      * Login API to authenticate the user
      * @param loginDto request payload containing user details
-     * @return message after the login process
+     * @return JwtAuthResponse which contains token details after successful authentication
      */
     @PostMapping(value = {"/login", "/signin"})
     public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
         LOGGER.info("Inside AuthController.class login()");
-        final String token = authService.login(loginDto);
-        JwtAuthResponse jwtAuthResponse = JwtAuthResponse.builder()
-                .accessToken(token)
-                .build();
-        return new ResponseEntity<>(jwtAuthResponse, HttpStatus.OK);
+        return new ResponseEntity<>(authService.login(loginDto), HttpStatus.OK);
     }
 
     /**
