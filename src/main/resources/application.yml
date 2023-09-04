@@ -2,7 +2,7 @@ spring:
   datasource:
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:password}
-    url: jdbc:mysql://${DB_HOST:0.0.0.0}:${DB_PORT:3307}/myblog?createDatabaseIfNotExist=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://${DB_HOST:0.0.0.0}:${DB_PORT:3307}/myblog?createDatabaseIfNotExist=true&serverTimezone=UTC&allowPublicKeyRetrieval=true&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -24,4 +24,8 @@ spring:
 logging:
   level:
     org.springframework.security: DEBUG
+
+app:
+  jwt-secret-key: daf66e01593f61a15b857cf433aae03a005812b31234e149036bcc8dee755dbb
+  jwt-expiration-milliseconds: 1800000 # 30 minutes
 

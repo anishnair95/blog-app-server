@@ -1,5 +1,6 @@
 package com.springboot.blog.controller;
 
+import com.springboot.blog.dto.JwtAuthResponse;
 import com.springboot.blog.dto.LoginDto;
 import com.springboot.blog.dto.RegisterDto;
 import com.springboot.blog.service.AuthService;
@@ -29,11 +30,10 @@ public class AuthController {
     /**
      * Login API to authenticate the user
      * @param loginDto request payload containing user details
-     * @return message after the login process
+     * @return JwtAuthResponse which contains token details after successful authentication
      */
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDto loginDto) {
-
+    public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
         LOGGER.info("Inside AuthController.class login()");
         return new ResponseEntity<>(authService.login(loginDto), HttpStatus.OK);
     }
