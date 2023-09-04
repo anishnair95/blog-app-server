@@ -12,6 +12,7 @@ import com.springboot.blog.exception.BlogApiException;
 import com.springboot.blog.exception.ResourceNotFoundException;
 import com.springboot.blog.repository.RoleRepository;
 import com.springboot.blog.repository.UserRepository;
+import com.springboot.blog.security.JwtTokenProvider;
 import com.springboot.blog.service.AuthService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,15 +38,19 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final JwtTokenProvider jwtTokenProvider;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     @Autowired
     public AuthServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     /**
@@ -60,7 +65,9 @@ public class AuthServiceImpl implements AuthService {
         LOGGER.info("Inside AuthServiceImpl.class login()");
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return LOGIN_MESSAGE;
+        LOGGER.info(LOGIN_MESSAGE);
+        return jwtTokenProvider.generateToken(authentication);
+//        return LOGIN_MESSAGE;
     }
 
     @Override
