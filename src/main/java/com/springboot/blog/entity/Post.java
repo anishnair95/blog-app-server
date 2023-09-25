@@ -1,5 +1,8 @@
 package com.springboot.blog.entity;
 
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,5 +52,9 @@ public class Post {
     //We are specifying CascadeType.ALL because whenever an operation is performed on parent the child operation will also be taken care - insert, update, delete
     //orphanRemoval = true - because we want to delete child object as well.
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<Comment> comments = new HashSet<>();
+    private Set<Comment> comments = new HashSet<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Category category;
 }
