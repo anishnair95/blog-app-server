@@ -85,6 +85,7 @@ public class CategoryController {
      * @param id id of the category to be deleted
      * @return success message
      */
+    @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable(value = "id") Long id) {
         LOGGER.info("Inside CategoryController.class deleteCategory()");
