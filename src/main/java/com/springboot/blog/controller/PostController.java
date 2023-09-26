@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/posts")
@@ -118,5 +120,14 @@ public class PostController extends BaseController {
         return new ResponseEntity<>("Post deleted successfully", HttpStatus.OK);
     }
 
-
+    /**
+     * Get Posts based on category
+     * @param categoryId id of the category
+     * @return List of posts based on category
+     */
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Long categoryId) {
+        LOGGER.info("Inside PostController.class getPostsByCategory");
+        return new ResponseEntity<>(postService.getPostsByCategory(categoryId), HttpStatus.OK);
+    }
 }

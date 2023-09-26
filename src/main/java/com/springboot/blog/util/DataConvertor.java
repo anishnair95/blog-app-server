@@ -40,6 +40,7 @@ public class DataConvertor {
                 .description(post.getDescription())
                 .comments(post.getComments() != null ? post.getComments().stream().map(DataConvertor::commentEntityToDto).collect(Collectors.toSet())
                         : Collections.emptySet())
+                .categoryId(post.getCategory() != null ? post.getCategory().getId() : null)
                 .build();
     }
 
