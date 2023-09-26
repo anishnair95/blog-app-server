@@ -48,4 +48,11 @@ public interface PostService {
      */
     void deletePost(Long id);
 
+    /**
+     * Get Posts based on category id
+     * @param categoryId id of the category
+     * @return List of all posts based on category
+     */
+    List<PostDto> getPostsByCategory(Long categoryId);
+
 }

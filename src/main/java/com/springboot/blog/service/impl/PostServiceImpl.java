@@ -122,4 +122,12 @@ public class PostServiceImpl implements PostService {
 
         postRepository.delete(post);
     }
+
+    @Override
+    public List<PostDto> getPostsByCategory(Long categoryId) {
+        LOGGER.info("Inside PostServiceImpl.class getPostsByCategory()");
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException(Category.class.getSimpleName(), "id", categoryId.toString()));
+        return DataConvertor.postEntitiesToDto(postRepository.findByCategoryId(categoryId));
+    }
 }
