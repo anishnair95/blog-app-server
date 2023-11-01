@@ -73,6 +73,8 @@ public class SecurityConfig {
                         //  authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                         authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll() // accessible by all the users
                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
