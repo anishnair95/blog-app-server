@@ -9,7 +9,11 @@ import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_DIRECTI
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
 import com.springboot.blog.service.PostService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
+@Tag(name = "CRUD REST APIs for POST resource")
 public class PostController extends BaseController {
 
     private final PostService postService;
@@ -51,6 +56,12 @@ public class PostController extends BaseController {
      * @param postDto Request object
      * @return PostDto response
      */
+
+    @Operation(summary = "Create Post REST API", description = "Create Post REST API to create new posts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "HttpStatus 201 created"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
     // note: while mentioning role by default prefix 'ROLE' is checked
     // if the prefix is not present then it is automatically added by internal functions but this is not same when defining role check in SecurityConfig
     @SecurityRequirement(name = "Bear Authentication") // swagger related - this API needs token
@@ -67,6 +78,11 @@ public class PostController extends BaseController {
      * @param pageSize number of posts required in single response
      * @return List of posts
      */
+    @Operation(summary = "Get Posts REST API", description = "Get posts REST API to get all the posts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
     @SecurityRequirement(name = "Bear Authentication")
     @GetMapping
     public ResponseEntity<PostResponse> getAllPosts(
@@ -84,6 +100,11 @@ public class PostController extends BaseController {
      * @param id id of the required post
      * @return Post object with details
      */
+    @Operation(summary = "Get Post REST API", description = "Get post REST API to get post by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
     @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
@@ -97,6 +118,11 @@ public class PostController extends BaseController {
      * @param id id of the post object to update
      * @return Post object
      */
+    @Operation(summary = "Update Post REST API", description = "Update post REST API to update post by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
@@ -110,6 +136,11 @@ public class PostController extends BaseController {
      * @param id id of the post to delete
      * @return returns success message if post deleted successfully
      */
+    @Operation(summary = "Delete Post REST API", description = "Delete post REST API to delete post by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
@@ -124,6 +155,11 @@ public class PostController extends BaseController {
      * @param categoryId id of the category
      * @return List of posts based on category
      */
+    @Operation(summary = "Get post by category REST API", description = "Get post REST API to get post by category id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
     @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Long categoryId) {

@@ -128,6 +128,6 @@ public class PostServiceImpl implements PostService {
         LOGGER.info("Inside PostServiceImpl.class getPostsByCategory()");
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException(Category.class.getSimpleName(), "id", categoryId.toString()));
-        return DataConvertor.postEntitiesToDto(postRepository.findByCategoryId(categoryId));
+        return DataConvertor.postEntitiesToDto(postRepository.findByCategoryId(category.getId()));
     }
 }
