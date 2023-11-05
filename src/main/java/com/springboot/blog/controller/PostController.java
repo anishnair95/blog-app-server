@@ -9,6 +9,7 @@ import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_DIRECTI
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
 import com.springboot.blog.service.PostService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ public class PostController extends BaseController {
      */
     // note: while mentioning role by default prefix 'ROLE' is checked
     // if the prefix is not present then it is automatically added by internal functions but this is not same when defining role check in SecurityConfig
+    @SecurityRequirement(name = "Bear Authentication") // swagger related - this API needs token
     @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
     @PostMapping
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
@@ -65,6 +67,7 @@ public class PostController extends BaseController {
      * @param pageSize number of posts required in single response
      * @return List of posts
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @GetMapping
     public ResponseEntity<PostResponse> getAllPosts(
             @RequestParam(name = "pageNo", defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
@@ -81,18 +84,12 @@ public class PostController extends BaseController {
      * @param id id of the required post
      * @return Post object with details
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class getPostById");
         return ResponseEntity.ok(postService.getPostById(id));
     }
-
-    @GetMapping("/health")
-    public String getStatus() {
-        LOGGER.info("Inside getStatus");
-        return "OK";
-    }
-
 
     /**
      * Update post by id
@@ -100,6 +97,7 @@ public class PostController extends BaseController {
      * @param id id of the post object to update
      * @return Post object
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name = "id") Long id) {
@@ -112,6 +110,7 @@ public class PostController extends BaseController {
      * @param id id of the post to delete
      * @return returns success message if post deleted successfully
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
@@ -125,6 +124,7 @@ public class PostController extends BaseController {
      * @param categoryId id of the category
      * @return List of posts based on category
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Long categoryId) {
         LOGGER.info("Inside PostController.class getPostsByCategory");

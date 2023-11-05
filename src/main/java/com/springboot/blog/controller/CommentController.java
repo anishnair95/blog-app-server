@@ -2,6 +2,7 @@ package com.springboot.blog.controller;
 
 import com.springboot.blog.dto.CommentDto;
 import com.springboot.blog.service.CommentService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public class CommentController extends BaseController {
      * @param commentDto comment payload with details
      * @return CommentDto response object
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<CommentDto> createComment(@PathVariable(name = "postId") Long postId, @Valid @RequestBody CommentDto commentDto) {
         LOGGER.info("Inside CommentController.class createComment");
@@ -53,6 +55,7 @@ public class CommentController extends BaseController {
      * @param postId id of the post
      * @return List of comments
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/posts/{postId}/comments")
     public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable(name = "postId") Long postId) {
         LOGGER.info("Inside CommentController.class getCommentsByPostId");
@@ -65,6 +68,7 @@ public class CommentController extends BaseController {
      * @param commentId id of the comment
      * @return Comment object
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @GetMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<CommentDto> getCommentById(@PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId) {
@@ -80,6 +84,7 @@ public class CommentController extends BaseController {
      * @param commentDto Comment payload object
      * @return updated comment object
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @PutMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId,
@@ -95,6 +100,7 @@ public class CommentController extends BaseController {
      * @param commentId id of the comment
      * @return success message
      */
+    @SecurityRequirement(name = "Bear Authentication")
     @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<String> deleteComment(@PathVariable(name = "postId") Long postId,
             @PathVariable(name = "commentId") Long commentId) {
