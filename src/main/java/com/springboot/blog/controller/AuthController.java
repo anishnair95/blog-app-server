@@ -4,6 +4,9 @@ import com.springboot.blog.dto.JwtAuthResponse;
 import com.springboot.blog.dto.LoginDto;
 import com.springboot.blog.dto.RegisterDto;
 import com.springboot.blog.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "REST APIs for Authentication Resource")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -32,6 +36,8 @@ public class AuthController {
      * @param loginDto request payload containing user details
      * @return JwtAuthResponse which contains token details after successful authentication
      */
+    @Operation(summary = "Login API", description = "Login REST API to authenticate user and generate auth token")
+    @ApiResponse(responseCode = "200", description = "HttpStatus success")
     @PostMapping(value = {"/login", "/signin"})
     public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginDto loginDto) {
         LOGGER.info("Inside AuthController.class login()");
@@ -43,6 +49,8 @@ public class AuthController {
      * @param registerDto request payload containing user details
      * @return message after the register process
      */
+    @Operation(summary = "Register API", description = "Register REST API to register a new user")
+    @ApiResponse(responseCode = "200", description = "HttpStatus success")
     @PostMapping(value = {"/register", "/signup"})
     public ResponseEntity<String> signup(@Valid @RequestBody RegisterDto registerDto) {
 
