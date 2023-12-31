@@ -130,4 +130,10 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new ResourceNotFoundException(Category.class.getSimpleName(), "id", categoryId.toString()));
         return DataConvertor.postEntitiesToDto(postRepository.findByCategoryId(category.getId()));
     }
+
+
+    public void testRun(Category category) {
+        System.out.println(category.getId());
+        System.out.println(category.getId());
+    }
 }
