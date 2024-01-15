@@ -1,13 +1,16 @@
 package com.springboot.blog.controller;
 
 
+import static com.springboot.blog.util.ApplicationConstants.DEFAULT_CURSOR;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_PAGE_NUMBER;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_PAGE_SIZE;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_BY;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_DIRECTION;
 
+import com.springboot.blog.dto.PostCursorResponse;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
+import com.springboot.blog.dto.PostsCursor;
 import com.springboot.blog.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -93,6 +96,34 @@ public class PostController extends BaseController {
         LOGGER.info("Inside PostController.class getPosts");
         LOGGER.info("Request params: pageNo:{}, pageSize: {}, sortBy: {}, sortDir: {}", pageNo, pageSize, sortBy, sortDir);
         return new ResponseEntity<>(postService.getAllPosts(pageNo, pageSize, sortBy, sortDir), HttpStatus.OK);
+    }
+
+    /**
+     * Get all posts v2
+     * @param pageSize number of posts required in single response
+     * @param sortBy column based on which records to be sorted
+     * @param sortDir sort direction (ASC, DESC)
+     * @param cursor cursor value to fetch next set of results
+     * @return posts results
+     */
+    @Operation(summary = "Get Posts REST API", description = "Get posts REST API to get all the posts by cursor pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
+    @SecurityRequirement(name = "Bear Authentication")
+    @GetMapping("/cursor")
+    public ResponseEntity<PostCursorResponse> getAllPostsByCursor(
+            @RequestParam(name = "pageSize", defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(name = "sortBy", defaultValue = DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = DEFAULT_SORT_DIRECTION, required = false) String sortDir,
+            @RequestParam(name = "cursor", defaultValue = DEFAULT_CURSOR, required = false) String cursor) {
+        LOGGER.info("Inside PostController.class getAllPostsByCursor");
+        LOGGER.info("Request params: pageSize: {}, sortBy: {}, sortDir: {}, cursor: {}", pageSize, sortBy, sortDir, cursor);
+        PostsCursor postsCursor = postService.processCursor(cursor, sortBy, sortDir, pageSize);
+        return new ResponseEntity<>(
+                postService.getAllPostsCursorPagination(postsCursor.getPageId(), postsCursor.getPageKey(), sortBy, sortDir, postsCursor.getPageSize()),
+                HttpStatus.OK);
     }
 
     /**

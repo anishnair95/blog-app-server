@@ -1,7 +1,9 @@
 package com.springboot.blog.service;
 
+import com.springboot.blog.dto.PostCursorResponse;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
+import com.springboot.blog.dto.PostsCursor;
 
 import java.util.List;
 
@@ -54,5 +56,9 @@ public interface PostService {
      * @return List of all posts based on category
      */
     List<PostDto> getPostsByCategory(Long categoryId);
+
+    PostsCursor processCursor(String cursor, String sortBy, String sortDir, int pageSize);
+
+    PostCursorResponse getAllPostsCursorPagination(String pageId, String pageKey, String sortBy, String sortDir, int pageSize);
 
 }

@@ -1,7 +1,9 @@
 package com.springboot.blog.service.impl;
 
+import com.springboot.blog.dto.PostCursorResponse;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
+import com.springboot.blog.dto.PostsCursor;
 import com.springboot.blog.entity.Category;
 import com.springboot.blog.entity.Post;
 import com.springboot.blog.exception.ResourceNotFoundException;
@@ -9,6 +11,7 @@ import com.springboot.blog.repository.CategoryRepository;
 import com.springboot.blog.repository.PostRepository;
 import com.springboot.blog.service.PostService;
 import com.springboot.blog.util.DataConvertor;
+import jakarta.persistence.EntityManager;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,14 +36,17 @@ public class PostServiceImpl implements PostService {
     private final CategoryRepository categoryRepository;
 
     private final ModelMapper modelMapper;
+
+    private final EntityManager entityManager;
     private static final Logger LOGGER = LoggerFactory.getLogger(PostService.class);
 
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, ModelMapper modelMapper) {
+    public PostServiceImpl(PostRepository postRepository, CategoryRepository categoryRepository, ModelMapper modelMapper, EntityManager entityManager) {
         this.postRepository = postRepository;
         this.categoryRepository = categoryRepository;
         this.modelMapper = modelMapper;
+        this.entityManager = entityManager;
     }
 
     @Deprecated
@@ -69,6 +78,160 @@ public class PostServiceImpl implements PostService {
                 .last(posts.isLast())
                 .build();
     }
+
+    @Override
+    public PostCursorResponse getAllPostsCursorPagination(String pageId, String pageKey, String sortBy, String sortDir, int pageSize) {
+        LOGGER.info("Inside PostServiceImpl.class getAllPostsCursorPagination()");
+
+        String comparator = ">";
+        if (!sortDir.equalsIgnoreCase("ASC")) {
+          comparator = "<";
+        }
+
+        List<Post> posts = Collections.emptyList();
+        if (sortBy.equalsIgnoreCase("id")) {
+            posts = findPostsByDynamicCriteria(comparator, pageId, sortDir, pageSize);
+//            posts = postRepository.findPostsByIdCursor(comparator, pageId, sortDir, pageSize);
+
+        } else {
+            // TODO: modify use entitymanager or jpa specification
+            posts = postRepository.findAllPostsByCursor(sortBy, pageKey, comparator, pageId, sortDir, pageSize);
+
+        }
+
+        // process the next cursor
+        PostsCursor postsCursor = getNextPageCursor(sortBy, sortDir, pageSize, posts);
+        return PostCursorResponse.builder()
+                .data(DataConvertor.postEntitiesToDto(posts))
+                .nextPageCursor(postsCursor != null ? postsCursor.encodeCursorString() : null)
+                .build();
+    }
+
+    public List<Post> findPostsByDynamicCriteria(String comparator, String value, String dir, int limit) {
+        String query = "SELECT p FROM Post p WHERE p.id " + comparator + " :value ORDER BY p.id " + dir;
+        return entityManager.createQuery(query, Post.class)
+                .setParameter("value", value)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    private PostsCursor getNextPageCursor(String sortBy, String sortDir, int pageSize, List<Post> posts) {
+
+        if (posts.size() == 0) {
+            return null;
+        }
+
+        Post lastPost = posts.get(posts.size() - 1);
+        String nextPageId = String.valueOf(lastPost.getId());
+        String nextPageKey = getNextPageKey(sortBy, lastPost);
+        PostsCursor postsCursor = PostsCursor.builder()
+                .pageId(nextPageId)
+                .pageKey(nextPageKey)
+                .sortBy(sortBy)
+                .pageSize(pageSize)
+                .direction(sortDir)
+                .build();
+        return postsCursor;
+    }
+
+    private String getNextPageKey(String sortBy, Post post) {
+        switch (sortBy) {
+            case "title":
+                return post.getTitle();
+            case "description":
+                return post.getDescription();
+            case "content":
+                return post.getContent();
+            case "id":
+                return String.valueOf(post.getId());
+            default:
+                throw new IllegalArgumentException("Invalid sort by column provided");
+        }
+    }
+
+    public PostsCursor processCursor(String cursor, String sortBy, String sortDir, int pageSize) {
+        if (pageSize <= 0) {
+            throw new IllegalArgumentException("Pagesize cannot be 0");
+        }
+
+        if (cursor.equalsIgnoreCase("")) {
+            //create cursor
+            String pageId = String.valueOf(Long.MIN_VALUE);
+            String pageKey = getMinValue(sortBy);
+
+            if (!sortDir.equalsIgnoreCase("ASC")) {
+                pageKey = getMaxValue(sortBy);
+                pageId = String.valueOf(Long.MAX_VALUE);
+            }
+            return PostsCursor.builder()
+                    .sortBy(sortBy)
+                    .direction(sortDir)
+                    .pageKey(pageKey)
+                    .pageId(pageId)
+                    .pageSize(pageSize).build();
+
+        } else {
+            // decode cursor
+            return PostsCursor.decodeCursorString(cursor)
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid cursor provided"));
+        }
+    }
+
+
+    public String getMaxValue(String column) {
+        switch (column) {
+            case "title":
+            case "description":
+                return "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
+                // MAX varchar(255)
+            case "content":
+                return "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
+                        + "zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz";
+                // MAX varchar(500)
+            default:
+                return String.valueOf(Long.MAX_VALUE);
+        }
+    }
+
+    public String getMinValue(String column) {
+        switch (column) {
+            case "title":
+            case "description":
+            case "content":
+                return ""; //SMALLEST possible value
+            default:
+                return String.valueOf(Long.MIN_VALUE);
+        }
+    }
+
+
+    public static void main(String args[]) {
+        StringBuilder up = new StringBuilder();
+        StringBuilder low = new StringBuilder();
+
+        for (int i = 0; i < 500; i++) {
+            up.append('Z');
+        }
+
+        for (int i = 0; i < 500; i++) {
+            low.append('z');
+        }
+
+        if (up.compareTo(low) > 0) {
+            System.out.println("Greatest string:" + up.toString());
+        } else {
+            System.out.println("Greatest string:" + low.toString());
+        }
+    }
+
 
     @Override
     public PostDto createPost(PostDto postDto) {
