@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.Lists;
 import com.springboot.blog.dto.PostDto;
 import com.springboot.blog.dto.PostResponse;
 import com.springboot.blog.entity.Category;
@@ -27,10 +28,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceImplTest {
@@ -137,8 +141,13 @@ class PostServiceImplTest {
     void getPostById() {
     }
 
-//    @Test
+    @Test
     void updatePost() {
+
+        List<String> queryModels = Stream.of("HP", "Apple", "Dell", "Samsung", "Lenovo").collect(Collectors.toList());
+        for(List<String> q : Lists.partition(queryModels, 2)) {
+            System.out.println(q);
+        }
     }
 
 //    @Test
@@ -148,4 +157,5 @@ class PostServiceImplTest {
 //    @Test
     void getPostsByCategory() {
     }
+
 }
