@@ -108,7 +108,7 @@ public class PostController extends BaseController {
             @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
     })
     @SecurityRequirement(name = "Bear Authentication")
-    @GetMapping("/api/v1/posts/{id}")
+    @GetMapping(value = "/api/posts/{id}", params = "version=1")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class getPostById");
         return ResponseEntity.ok(postService.getPostById(id));
@@ -125,7 +125,7 @@ public class PostController extends BaseController {
             @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
     })
     @SecurityRequirement(name = "Bear Authentication")
-    @GetMapping("/api/v2/posts/{id}")
+    @GetMapping(value ="/api/posts/{id}", params = "version=2")
     public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class getPostById");
         PostDto postDto = postService.getPostById(id);
