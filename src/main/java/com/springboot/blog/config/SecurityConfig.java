@@ -79,7 +79,7 @@ public class SecurityConfig {
                         // authorize.anyRequest().authenticated())
                         // allow anyone to access the url pattern without auth
                         //  authorize.requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                        authorize.requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll() // accessible by all the users
+                        authorize.requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll() // accessible by all the users
                                 .requestMatchers(HttpMethod.GET, "/api/**").hasAnyRole("USER", "ADMIN")
                                 .requestMatchers("/swagger-ui/**").permitAll()
                                 .requestMatchers("/v3/api-docs/**").permitAll()
