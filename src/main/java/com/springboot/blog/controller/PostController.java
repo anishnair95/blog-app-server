@@ -7,7 +7,9 @@ import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_BY;
 import static com.springboot.blog.util.ApplicationConstants.DEFAULT_SORT_DIRECTION;
 
 import com.springboot.blog.dto.PostDto;
+import com.springboot.blog.dto.PostDtoV2;
 import com.springboot.blog.dto.PostResponse;
+import com.springboot.blog.mapper.PostMapper;
 import com.springboot.blog.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -36,7 +38,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping
 @Tag(name = "CRUD REST APIs for POST resource")
 public class PostController extends BaseController {
 
@@ -66,7 +68,7 @@ public class PostController extends BaseController {
     // if the prefix is not present then it is automatically added by internal functions but this is not same when defining role check in SecurityConfig
     @SecurityRequirement(name = "Bear Authentication") // swagger related - this API needs token
     @PreAuthorize("hasRole('ADMIN')") // only accessible by ADMIN
-    @PostMapping
+    @PostMapping("/api/v1/posts")
     public ResponseEntity<PostDto> createPost(@RequestBody @Valid PostDto postDto) {
         LOGGER.info("Inside PostController.class createPost");
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
@@ -84,7 +86,7 @@ public class PostController extends BaseController {
             @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
     })
     @SecurityRequirement(name = "Bear Authentication")
-    @GetMapping
+    @GetMapping("/api/v1/posts")
     public ResponseEntity<PostResponse> getAllPosts(
             @RequestParam(name = "pageNo", defaultValue = DEFAULT_PAGE_NUMBER, required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = DEFAULT_PAGE_SIZE, required = false) int pageSize,
@@ -106,10 +108,32 @@ public class PostController extends BaseController {
             @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
     })
     @SecurityRequirement(name = "Bear Authentication")
-    @GetMapping("/{id}")
+    @GetMapping(value = "/api/posts/{id}", produces = "application/vnd.javaguides.v1+json")
     public ResponseEntity<PostDto> getPostById(@PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class getPostById");
         return ResponseEntity.ok(postService.getPostById(id));
+    }
+
+    /**
+     * Get post details by id v2
+     * @param id id of the required post
+     * @return Post object with details
+     */
+    @Operation(summary = "Get Post REST API", description = "Get post REST API to get post by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HttpStatus 200 success"),
+            @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
+    })
+    @SecurityRequirement(name = "Bear Authentication")
+    @GetMapping(value ="/api/posts/{id}", produces = "application/vnd.javaguides.v2+json")
+    public ResponseEntity<PostDtoV2> getPostByIdV2(@PathVariable(name = "id") Long id) {
+        LOGGER.info("Inside PostController.class getPostById");
+        PostDto postDto = postService.getPostById(id);
+        PostMapper postMapper = PostMapper.INSTANCE;
+        PostDtoV2 postDtoV2 = postMapper.fromPostDto(postDto);
+        List<String> tags = List.of("Java", "SpringBoot", "AWS");
+        postDtoV2.setTags(tags);
+        return ResponseEntity.ok(postDtoV2);
     }
 
     /**
@@ -125,7 +149,7 @@ public class PostController extends BaseController {
     })
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
+    @PutMapping("/api/v1/posts/{id}")
     public ResponseEntity<PostDto> updatePost(@RequestBody @Valid PostDto postDto, @PathVariable(name = "id") Long id) {
         LOGGER.info("Inside PostController.class updatePost");
         return ResponseEntity.ok(postService.updatePost(postDto, id));
@@ -143,7 +167,7 @@ public class PostController extends BaseController {
     })
     @SecurityRequirement(name = "Bear Authentication")
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/v1/posts/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id) {
         LOGGER.info("Inside PostController.class deletePost");
         postService.deletePost(id);
@@ -161,7 +185,7 @@ public class PostController extends BaseController {
             @ApiResponse(responseCode = "500", description = "HttpStatus 500 internal server error")
     })
     @SecurityRequirement(name = "Bear Authentication")
-    @GetMapping("/category/{categoryId}")
+    @GetMapping("/api/v1/posts/category/{categoryId}")
     public ResponseEntity<List<PostDto>> getPostsByCategory(@PathVariable Long categoryId) {
         LOGGER.info("Inside PostController.class getPostsByCategory");
         return new ResponseEntity<>(postService.getPostsByCategory(categoryId), HttpStatus.OK);
