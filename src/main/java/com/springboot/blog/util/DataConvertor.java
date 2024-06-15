@@ -1,5 +1,7 @@
 package com.springboot.blog.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.springboot.blog.dto.CategoryDto;
@@ -142,6 +144,16 @@ public class DataConvertor {
         category.setDescription(categoryDto.getDescription());
         return category;
     }
+
+    /**
+     * Method to serialize object to json string
+     * @param jsonString json string to be converted
+     * @param clazz class type of the object
+     * @return object of type T
+     * @param <T> type of object
+     *
+     * this method throws exception if the jsonstring contains invalid parameter
+     */
     public static <T> T deserializeJsonString(String jsonString, Class<T> clazz) {
 
         LOGGER.info("Inside deserialize convertor");
@@ -154,6 +166,26 @@ public class DataConvertor {
             }
         }
         return null;
+    }
+
+    /**
+     * Method to serialize object to json string
+     * @param json object to be converted
+     * @param clazz class type of the object
+     * @return object of type T
+     * @param <T>
+     *
+     * This method will ignore the json string if it contains unknown properties
+     */
+    public static <T> T readValue(String json, Class<T> clazz) {
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        try {
+            return mapper.readValue(json, clazz);
+        } catch (JsonProcessingException e) {
+            String message = "Error while deserializing JSON object of type " + clazz.getCanonicalName();
+            LOGGER.error(message, e);
+            throw new RuntimeException(e);
+        }
     }
 
 }
