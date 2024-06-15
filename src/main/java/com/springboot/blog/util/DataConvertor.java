@@ -25,6 +25,8 @@ import java.util.stream.Collectors;
 public class DataConvertor {
 
     private static final ObjectMapper mapper = new ObjectMapper().registerModule(new JavaTimeModule());
+    private static final ObjectMapper mapper1 = new ObjectMapper().registerModule(new JavaTimeModule());
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DataConvertor.class);
 
     public static Post postDtoToEntity(PostDto postDto) {
@@ -159,7 +161,7 @@ public class DataConvertor {
         LOGGER.info("Inside deserialize convertor");
         if (jsonString != null && !jsonString.isEmpty()) {
             try {
-                return mapper.readValue(jsonString, clazz);
+                return mapper1.readValue(jsonString, clazz);
             } catch (Exception e) {
                 LOGGER.error("Error in deserialization with error message: {}", e.getMessage());
                 throw new RuntimeException(e);
